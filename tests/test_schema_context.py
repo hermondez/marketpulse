@@ -28,3 +28,12 @@ def test_schema_context_only_allowlisted(tmp_path):
 
 def test_extract_sql_strips_markdown():
     assert extract_sql("```sql\nSELECT 1;\n```") == "SELECT 1"
+
+
+def test_schema_context_falls_back_to_yml():
+    from pathlib import Path
+
+    target = Path(__file__).resolve().parents[1] / "dbt" / "target_inexistente"
+    ctx = build_schema_context(target)
+    assert "MARTS.FCT_DAILY_METRICS" in ctx and "RSI_14" in ctx
+    assert "STG_PRICES_DAILY" not in ctx

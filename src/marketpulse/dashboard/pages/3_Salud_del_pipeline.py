@@ -1,12 +1,14 @@
 import streamlit as st
 
+from marketpulse.config import MARTS_SCHEMA
 from marketpulse.dashboard.db import query
 
 st.title("Salud del pipeline")
 runs = query("SELECT * FROM OPS.DBT_RUNS ORDER BY generated_at DESC LIMIT 50")
+# El rol lector no ve RAW: la frescura se mide en el mart (lo que ve el usuario final).
 fresh = query(
     "SELECT MAX(trade_date) AS ultimo_dia, COUNT(DISTINCT ticker) AS tickers "
-    "FROM RAW.PRICES_DAILY"
+    f"FROM {MARTS_SCHEMA}.FCT_DAILY_METRICS"
 )
 c1, c2, c3 = st.columns(3)
 if not runs.empty:

@@ -1,16 +1,5 @@
-# Versiones fijadas (asumidas: Python 3.11, dbt-core 1.8.x, dbt-snowflake 1.8.x)
-pandas==2.2.3
-pyyaml==6.0.2
-requests==2.32.3
-tenacity==9.0.0
-python-dotenv==1.0.1
-sqlglot==25.24.5
-exchange_calendars==4.5.6
-yfinance==0.2.66
-# curl_cffi>=0.14 exige cffi>=2, incompatible con snowflake-connector 3.x (cffi<2)
-curl_cffi==0.13.0
-snowflake-connector-python[pandas]==3.12.2
-dbt-core==1.8.8
-dbt-snowflake==1.8.4
-streamlit==1.39.0
-plotly==5.24.1
+# Instalación para Streamlit Community Cloud (solo dashboard, sin dbt ni ingesta).
+# Instala el paquete `marketpulse` (layout src/) + extra `dashboard`; las versiones
+# exactas están fijadas en pyproject.toml. Python 3.11 (elegir en Advanced settings).
+# Pipeline/CI: usa requirements-pipeline.txt.
+-e .[dashboard]

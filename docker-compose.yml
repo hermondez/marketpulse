@@ -15,4 +15,4 @@ services:
     ports: ["8501:8501"]
     command: >
       sh -c "pip install -q -e '.[dashboard]' &&
-             streamlit run src/marketpulse/dashboard/app.py --server.address 0.0.0.0"
+             streamlit run streamlit_app.py --server.address 0.0.0.0"

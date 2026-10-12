@@ -1,8 +1,7 @@
-"""Portada del dashboard. Ejecutar: `streamlit run src/marketpulse/dashboard/app.py`."""
+"""Portada del dashboard. Se carga desde `streamlit_app.py` (punto de entrada)."""
 
 import streamlit as st
 
-st.set_page_config(page_title="MarketPulse", page_icon="📈", layout="wide")
 st.title("📈 MarketPulse")
 st.markdown(
     """

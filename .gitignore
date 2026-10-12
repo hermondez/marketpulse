@@ -16,3 +16,5 @@ dbt/profiles.yml
 logs/
 .DS_Store
 .vscode/settings.json
+# Streamlit
+.streamlit/secrets.toml

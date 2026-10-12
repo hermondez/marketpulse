@@ -3,7 +3,7 @@ FROM python:3.11-slim AS builder
 WORKDIR /build
 COPY pyproject.toml README.md ./
 COPY src ./src
-RUN pip install --no-cache-dir --prefix=/install .
+RUN pip install --no-cache-dir --prefix=/install ".[ingest]"
 
 FROM python:3.11-slim
 # Usuario no-root: buena práctica de seguridad en contenedores.

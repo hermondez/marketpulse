@@ -21,7 +21,7 @@ jobs:
           cache: pip
       - run: pip install -r requirements-dev.txt && pip install -e . --no-deps
       - name: Ruff (lint)
-        run: ruff check src tests
+        run: ruff check src tests streamlit_app.py
       - name: Pytest
         run: pytest -q
 

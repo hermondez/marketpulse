@@ -10,8 +10,9 @@ description = "Herramienta educativa: tracker de mercado, alertas, salud del pip
 readme = "README.md"
 requires-python = ">=3.11,<3.12"
 license = { text = "MIT" }
-# Dependencias núcleo (ingesta, alertas, health, seguridad SQL). Versiones fijadas
-# igual que en requirements.txt para builds reproducibles.
+# Dependencias núcleo: lo mínimo que comparten dashboard, alertas, health y seguridad SQL.
+# Las de ingesta (yfinance, calendario) van en el extra `ingest` para que Streamlit Cloud
+# no las instale. Versiones fijadas igual que en requirements-pipeline.txt.
 dependencies = [
   "pandas==2.2.3",
   "pyyaml==6.0.2",
@@ -19,13 +20,15 @@ dependencies = [
   "tenacity==9.0.0",
   "python-dotenv==1.0.1",
   "sqlglot==25.24.5",
-  "exchange_calendars==4.5.6",
-  "yfinance==0.2.66",
-  "curl_cffi==0.13.0",  # >=0.14 exige cffi>=2, choca con snowflake-connector 3.x
   "snowflake-connector-python[pandas]==3.12.2",
 ]
 
 [project.optional-dependencies]
+ingest = [
+  "exchange_calendars==4.5.6",
+  "yfinance==0.2.66",
+  "curl_cffi==0.13.0",  # >=0.14 exige cffi>=2, choca con snowflake-connector 3.x
+]
 dashboard = ["streamlit==1.39.0", "plotly==5.24.1"]
 dbt = ["dbt-core==1.8.8", "dbt-snowflake==1.8.4"]
 dev = ["ruff==0.6.9", "pytest==8.3.3"]

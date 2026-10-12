@@ -1,5 +1,8 @@
 """Helpers de datos para Streamlit. Caché de 10 min para no despertar el warehouse
-en cada clic (cada consulta cuesta créditos si el warehouse está suspendido)."""
+en cada clic (cada consulta cuesta créditos si el warehouse está suspendido).
+
+Seguridad: el dashboard usa SIEMPRE el rol de solo lectura (MARKETPULSE_READER).
+En Streamlit Cloud no hacen falta credenciales del loader ni del transformer."""
 
 from __future__ import annotations
 
@@ -11,7 +14,7 @@ from marketpulse.snowflake_client import connect
 
 @st.cache_data(ttl=600, show_spinner="Consultando Snowflake...")
 def query(sql: str, params: tuple | None = None) -> pd.DataFrame:
-    with connect() as conn:
+    with connect(reader=True, timeout_s=60) as conn:
         cur = conn.cursor()
         cur.execute(sql, params)
         df = cur.fetch_pandas_all()

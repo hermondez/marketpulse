@@ -15,7 +15,8 @@ El código vive en `src/marketpulse/` y se instala como paquete (`pip install -e
 ## Cómo funciona
 `[tool.setuptools.packages.find] where = ["src"]` le dice a setuptools dónde buscar.
 Modo editable (`-e`) enlaza el código: cambias un archivo y no necesitas reinstalar.
-`requirements.txt` fija versiones exactas para builds reproducibles (CI/Docker); `pyproject.toml`
+`requirements-pipeline.txt` fija versiones exactas para builds reproducibles (CI/Docker) y
+`requirements.txt` (`-e .[dashboard]`) instala solo el dashboard en Streamlit Cloud; `pyproject.toml`
 también las fija aquí porque es una aplicación, no una librería.
 
 ## Alternativas

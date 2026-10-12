@@ -1,12 +1,14 @@
 """Configuración centralizada.
 
 Decisión: todo secreto viene de variables de entorno (localmente vía .env, en CI vía
-GitHub Secrets). Nada sensible vive en el código ni en YAML versionado.
+GitHub Secrets) o, en Streamlit Community Cloud, de `st.secrets`. Nada sensible vive en
+el código ni en YAML versionado.
 """
 
 from __future__ import annotations
 
 import os
+import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -25,11 +27,30 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 CONFIG_DIR = Path(os.getenv("MARKETPULSE_CONFIG_DIR", REPO_ROOT / "config"))
 
 
+def _from_streamlit_secrets(name: str) -> str | None:
+    """Busca `name` en st.secrets SOLO si Streamlit ya está cargado (el dashboard).
+
+    No importamos streamlit aquí: la CLI, CI y Docker no lo necesitan ni lo instalan.
+    Si no hay secrets.toml, st.secrets lanza excepción: la tratamos como "no existe".
+    """
+    st = sys.modules.get("streamlit")
+    if st is None:
+        return None
+    try:
+        value = st.secrets.get(name)
+    except Exception:  # noqa: BLE001 - sin secrets.toml / fuera de un script Streamlit
+        return None
+    return None if value is None else str(value)
+
+
 def env(name: str, default: str | None = None, required: bool = False) -> str | None:
-    """Lee una variable de entorno; si es obligatoria y falta, falla con mensaje claro."""
-    value = os.getenv(name, default)
+    """Orden: variable de entorno -> st.secrets (Streamlit Cloud) -> default.
+
+    Si es obligatoria y falta, falla con un mensaje claro (sin mostrar valores).
+    """
+    value = os.getenv(name) or _from_streamlit_secrets(name) or default
     if required and not value:
-        raise RuntimeError(f"Falta la variable de entorno obligatoria: {name}")
+        raise RuntimeError(f"Falta la variable/secret obligatoria: {name}")
     return value
 
 

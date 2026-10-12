@@ -15,10 +15,10 @@ venv: ## Crea el entorno virtual
 	$(PY) -m venv $(VENV)
 
 install: venv ## Instala dependencias + paquete en modo editable
-	$(BIN)/pip install -r requirements-dev.txt && $(BIN)/pip install -e ".[dashboard]"
+	$(BIN)/pip install -r requirements-dev.txt && $(BIN)/pip install -e ".[dashboard,ingest]"
 
 lint: ## ruff (estilo + errores comunes)
-	$(BIN)/ruff check src tests
+	$(BIN)/ruff check src tests streamlit_app.py
 
 fmt: ## Formatea código
 	$(BIN)/ruff format src tests && $(BIN)/ruff check --fix src tests
@@ -45,7 +45,7 @@ health: ## Registra run_results y chequea frescura/volumen
 	$(BIN)/mp-health --run-results dbt/target/run_results.json
 
 dashboard: ## Lanza Streamlit
-	$(BIN)/streamlit run src/marketpulse/dashboard/app.py
+	$(BIN)/streamlit run streamlit_app.py
 
 bot: ## Bot interactivo (polling) opcional
 	$(BIN)/mp-bot

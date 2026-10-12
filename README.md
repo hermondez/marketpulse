@@ -2,7 +2,7 @@
 
 > **Versiones asumidas**: Python 3.11 · dbt-core 1.8.x (1.8.8) · dbt-snowflake 1.8.x (1.8.4) ·
 > Snowflake (edición Standard o superior) · Streamlit 1.39 · sqlglot 25.x · ruff 0.6 · pytest 8.3.
-> Todas fijadas en `requirements.txt` / `pyproject.toml`.
+> Todas fijadas en `pyproject.toml` y `requirements-pipeline.txt` (`requirements.txt` es solo para Streamlit Cloud).
 
 **Herramienta educativa** de ingeniería de datos sobre mercados: ingesta diaria de precios públicos a
 Snowflake, métricas con dbt, alertas por Telegram, observabilidad del pipeline y preguntas en
@@ -70,8 +70,10 @@ make lint test                    # ruff + pytest (sin Snowflake)
 cp dbt/profiles.example.yml dbt/profiles.yml && make dbt-parse
 # con Snowflake (tras ejecutar infra/snowflake/*.sql):
 make backfill && make dbt-build && make health && make alerts
-make dashboard
+make dashboard                    # = streamlit run streamlit_app.py
 ```
+Desplegar el dashboard en Streamlit Community Cloud: **[docs/deploy_streamlit_cloud.md](docs/deploy_streamlit_cloud.md)**
+(main file `streamlit_app.py`, Python 3.11, solo rol de lectura).
 Paso a paso con resultados esperados: **[docs/checklist.md](docs/checklist.md)**.
 
 ## Decisiones técnicas

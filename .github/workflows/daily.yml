@@ -46,7 +46,7 @@ jobs:
         with:
           python-version: "3.11"
           cache: pip
-      - run: pip install -r requirements.txt && pip install -e . --no-deps
+      - run: pip install -r requirements-pipeline.txt && pip install -e . --no-deps
 
       - name: ¿Hoy abre la NYSE?
         id: cal

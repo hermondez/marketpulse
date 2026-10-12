@@ -27,6 +27,8 @@ Solo se envía el **esquema** (de `manifest.json`/`catalog.json`), nunca filas, 
 2. **Rol `MARKETPULSE_READER`** (`infra/snowflake/02_readonly_role.sql`): solo `SELECT` en `MARTS`.
 3. **Timeout**: `STATEMENT_TIMEOUT_IN_SECONDS=30` en usuario y sesión.
 4. **Humano en el bucle**: el SQL se muestra antes de ejecutar.
+5. **Contraseña `APP_ASK_PASSWORD`** (sin ella la página se desactiva) y **límite de preguntas por
+   sesión** (`APP_ASK_MAX_QUESTIONS`), en `ask/access.py`.
 
 Tests: `tests/test_sql_guard.py` (DROP, UPDATE, DELETE, INSERT, MERGE, TRUNCATE, GRANT, CALL, USE,
 multi-sentencia, trucos con comentarios, tablas/esquemas fuera de allowlist, CTE con DML, `SELECT INTO`,
@@ -53,5 +55,5 @@ Cualquier "texto a SQL" interno: siempre validador + rol de solo lectura + timeo
   available for trial accounts"*. En trial usa `LLM_PROVIDER=openai` o `anthropic`.
 - **Roles secundarios**: las cuentas nuevas tienen `DEFAULT_SECONDARY_ROLES=('ALL')`. La conexión de
   solo lectura ejecuta `USE SECONDARY ROLES NONE`; sin eso heredaría privilegios de otros roles.
-- **Dev**: el rol lector solo ve `MARTS` (prod). Para probar en dev se otorgó a mano
-  `USAGE` + `SELECT` sobre `DEV_MARTS` a `MARKETPULSE_READER`.
+- **Dev**: el rol lector solo ve `MARTS` (prod). El permiso temporal sobre `DEV_MARTS` usado en la
+  prueba se revocó.
