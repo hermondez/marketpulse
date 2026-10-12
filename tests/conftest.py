@@ -22,7 +22,7 @@ def run_results_file(tmp_path):
                 "message": "SUCCESS 1",
             },
             {
-                "unique_id": "test.marketpulse.not_null_x",
+                "unique_id": "test.marketpulse.not_null_x.ab12cd",
                 "status": "fail",
                 "execution_time": 0.3,
                 "failures": 4,

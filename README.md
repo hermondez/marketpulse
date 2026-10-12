@@ -93,11 +93,22 @@ Detalles: [arquitectura](docs/architecture.md) · [src layout](docs/src_layout.m
 [conceptos de inversión](docs/conceptos_basicos_inversion.md) · [BotFather](docs/telegram_botfather.md)
 
 ## Capturas
-| Mercado | Portafolio simulado | Salud del pipeline | Pregunta a tus datos |
-|---|---|---|---|
-| ![Mercado](docs/img/mercado.png) | ![Portafolio](docs/img/portafolio.png) | ![Salud](docs/img/salud.png) | ![Pregunta](docs/img/pregunta.png) |
+Datos reales (target dev, cierre 2026-10-09).
 
-*(Placeholders: añade tus capturas en `docs/img/`.)*
+**Portada**
+![Portada](docs/img/home.png)
+
+**Mercado**: tabla de métricas, precio ajustado con SMA 50/200, RSI 14 y drawdown.
+![Mercado](docs/img/mercado.png)
+
+**Portafolio simulado**: posiciones hipotéticas, valor vs costo.
+![Portafolio simulado](docs/img/portafolio.png)
+
+**Salud del pipeline**: última corrida, historial y nodos más lentos.
+![Salud del pipeline](docs/img/salud.png)
+
+**Pregunta a tus datos**: chat en español → SQL validado (requiere un LLM configurado).
+![Pregunta a tus datos](docs/img/pregunta.png)
 
 ## Crítica honesta (lo que un revisor señalaría)
 - **yfinance no es oficial**: rompe sin aviso y sus términos no permiten redistribución. Para algo

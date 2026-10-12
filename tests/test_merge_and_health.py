@@ -19,6 +19,7 @@ def test_parse_run_results(run_results_file):
     run, nodes = parse_run_results(run_results_file)
     assert run["status"] == "failed" and run["n_errors"] == 1 and run["command"] == "build"
     assert nodes[0]["resource_type"] == "model" and nodes[1]["failures"] == 4
+    assert nodes[1]["name"] == "not_null_x"
 
 
 def test_freshness_and_volume():
