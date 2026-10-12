@@ -1,0 +1,47 @@
+# Proyecto dbt de MarketPulse (dbt-core 1.8.x + dbt-snowflake 1.8.x)
+name: marketpulse
+version: "0.1.0"
+config-version: 2
+profile: marketpulse
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+snapshot-paths: ["snapshots"]
+macro-paths: ["macros"]
+test-paths: ["tests"]
+analysis-paths: ["analyses"]
+target-path: "target"
+clean-targets: ["target", "dbt_packages"]
+
+vars:
+  # Días hacia atrás que se recalculan en modelos incrementales (correcciones de la fuente).
+  incremental_lookback_days: 10
+  # Historia que se lee para calcular ventanas (SMA200, 52 semanas ~ 252 sesiones).
+  window_history_days: 400
+  trading_days_per_year: 252
+
+models:
+  marketpulse:
+    staging:
+      +schema: STAGING
+      +materialized: view
+    intermediate:
+      +schema: INTERMEDIATE
+      +materialized: view
+    marts:
+      +schema: MARTS
+      +materialized: table
+      +post-hook: "{{ grant_select_to_reader() }}"
+
+seeds:
+  marketpulse:
+    +schema: SEEDS
+    seed_ticker_metadata:
+      +column_types: {ticker: varchar(16)}
+    seed_portfolio_holdings:
+      # Mapeo en bloque y entre comillas: en un mapeo {a: number(18,6)} la coma rompe el YAML.
+      +column_types:
+        ticker: "varchar(16)"
+        shares: "number(18,6)"
+        avg_cost: "number(18,4)"
+        purchase_date: "date"

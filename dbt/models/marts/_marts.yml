@@ -1,0 +1,103 @@
+version: 2
+models:
+  - name: dim_ticker
+    description: Un registro por ticker de la watchlist con nombre, tipo y rango de fechas disponible.
+    columns:
+      - name: ticker
+        description: Símbolo bursátil (ej. VOO).
+        data_tests: [not_null, unique]
+      - name: name
+        description: Nombre del fondo o empresa.
+      - name: asset_type
+        description: "Tipo de activo: etf o stock."
+        data_tests:
+          - accepted_values: {values: ['etf', 'stock']}
+      - name: category
+        description: Categoría descriptiva (ej. Bonos EE.UU.).
+
+  - name: fct_daily_metrics
+    description: Métricas diarias por ticker (retornos, medias móviles, RSI, volatilidad, drawdown, 52 semanas).
+    data_tests:
+      - unique_combination_of_columns:
+          combination_of_columns: [ticker, trade_date]
+    columns:
+      - name: ticker
+        description: Símbolo bursátil.
+        data_tests:
+          - not_null
+          - relationships: {to: ref('dim_ticker'), field: ticker}
+      - name: trade_date
+        description: Fecha de la sesión.
+        data_tests: [not_null, not_in_future]
+      - name: close
+        description: Precio de cierre sin ajustar (USD).
+      - name: adj_close
+        description: Precio de cierre ajustado por dividendos y splits (USD).
+      - name: daily_return
+        description: Retorno diario simple en fracción (0.01 = 1 %).
+      - name: cumulative_return
+        description: Retorno acumulado desde el primer día disponible, en fracción.
+      - name: sma_50
+        description: Media móvil simple de 50 sesiones del precio ajustado.
+      - name: sma_200
+        description: Media móvil simple de 200 sesiones del precio ajustado.
+      - name: rsi_14
+        description: Índice de fuerza relativa de 14 sesiones (0-100), medias simples.
+        data_tests:
+          - is_between: {min_value: 0, max_value: 100}
+      - name: volatility_20d
+        description: Volatilidad anualizada con ventana de 20 sesiones, en fracción.
+      - name: volatility_252d
+        description: Volatilidad anualizada con ventana de 252 sesiones, en fracción.
+      - name: drawdown
+        description: Caída desde el máximo histórico (negativa o 0).
+        data_tests:
+          - is_between: {min_value: -1, max_value: 0}
+      - name: max_drawdown
+        description: Peor drawdown observado hasta esa fecha.
+      - name: pct_from_52w_high
+        description: Distancia al máximo de 52 semanas en fracción (negativa o 0).
+      - name: pct_from_52w_low
+        description: Distancia al mínimo de 52 semanas en fracción (positiva o 0).
+
+  - name: mart_latest_metrics
+    description: Última sesión disponible por ticker con todas las métricas, nombre y tipo.
+    columns:
+      - name: ticker
+        description: Símbolo bursátil.
+        data_tests: [unique, not_null]
+
+  - name: fct_dividends
+    description: Dividendos por acción en fecha ex (USD). Incremental.
+    columns:
+      - name: ticker
+        description: Símbolo bursátil.
+      - name: ex_date
+        description: Fecha ex-dividendo.
+      - name: dividend_per_share
+        description: Dividendo por acción en USD.
+
+  - name: fct_portfolio_daily
+    description: Valor diario de cada posición del portafolio SIMULADO (hipotético).
+    data_tests:
+      - unique_combination_of_columns:
+          combination_of_columns: [portfolio_id, ticker, trade_date]
+    columns:
+      - name: market_value
+        description: Acciones x precio de cierre (USD).
+      - name: cost_basis
+        description: Acciones x costo promedio (USD).
+      - name: unrealized_pnl
+        description: Ganancia/pérdida no realizada (USD).
+      - name: cumulative_dividends
+        description: Dividendos recibidos acumulados en efectivo (USD).
+
+  - name: mart_portfolio_summary
+    description: Foto del último día del portafolio simulado con peso y rendimiento total por posición.
+    columns:
+      - name: total_return_pct
+        description: (Ganancia no realizada + dividendos) / costo, en fracción.
+      - name: weight
+        description: Peso de la posición en el valor total, en fracción.
+        data_tests:
+          - is_between: {min_value: 0, max_value: 1}

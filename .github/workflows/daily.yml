@@ -1,0 +1,91 @@
+# Pipeline diario: lunes a viernes después del cierre de EE.UU.
+#
+# El cron de GitHub va SIEMPRE en UTC. La bolsa cierra a las 16:00 hora de Nueva York:
+#   - Horario de verano (EDT, UTC-4, mar-nov): 16:00 ET = 20:00 UTC
+#   - Horario estándar (EST, UTC-5, nov-mar):  16:00 ET = 21:00 UTC
+# Elegimos 22:30 UTC: 18:30 EDT / 17:30 EST. Así siempre corre >1 h después del cierre
+# sin tener que cambiar el cron dos veces al año. (Costa Rica, UTC-6: 16:30.)
+# Feriados: el cron no los conoce -> el primer paso consulta exchange_calendars y
+# omite el resto del job de forma limpia (sin marcarlo como fallo).
+name: daily
+
+on:
+  schedule:
+    - cron: "30 22 * * 1-5"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Ignorar calendario bursátil"
+        type: boolean
+        default: false
+
+concurrency:
+  group: daily
+  cancel-in-progress: false
+
+env:
+  SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+  SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+  SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+  SNOWFLAKE_ROLE: MARKETPULSE_LOADER
+  SNOWFLAKE_WAREHOUSE: MARKETPULSE_WH
+  SNOWFLAKE_DATABASE: MARKETPULSE
+  TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+  TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+  PRICE_SOURCE: yfinance
+  DBT_TARGET: prod
+  MARTS_SCHEMA: MARTS
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -r requirements.txt && pip install -e . --no-deps
+
+      - name: ¿Hoy abre la NYSE?
+        id: cal
+        run: python -m marketpulse.market_calendar >> "$GITHUB_OUTPUT"
+
+      - name: Día no hábil -> fin
+        if: steps.cal.outputs.is_trading_day != 'true' && inputs.force != true
+        run: echo "Feriado o fin de semana bursátil. Nada que hacer." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Ingesta (Python -> RAW)
+        id: ingest
+        if: steps.cal.outputs.is_trading_day == 'true' || inputs.force == true
+        run: mp-ingest --force
+
+      - name: dbt build (prod)
+        id: dbt
+        if: steps.ingest.outcome == 'success'
+        working-directory: dbt
+        run: |
+          cp profiles.example.yml profiles.yml
+          dbt source freshness --profiles-dir . || true
+          dbt build --profiles-dir .
+          dbt docs generate --profiles-dir .
+
+      - name: Salud del pipeline (siempre que se haya intentado)
+        if: always() && steps.ingest.outcome != 'skipped'
+        run: mp-health --run-results dbt/target/run_results.json
+
+      - name: Alertas de mercado
+        if: steps.dbt.outcome == 'success'
+        run: mp-alerts
+
+      - name: Guardar artefactos dbt (manifest para "Pregunta a tus datos")
+        if: always() && steps.dbt.outcome != 'skipped'
+        uses: actions/upload-artifact@v4
+        with:
+          name: dbt-target
+          path: |
+            dbt/target/manifest.json
+            dbt/target/catalog.json
+            dbt/target/run_results.json
+          retention-days: 14

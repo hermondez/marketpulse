@@ -1,0 +1,16 @@
+version: 2
+models:
+  - name: int_prices_returns
+    description: Retornos diarios simples y logarítmicos sobre precio ajustado.
+  - name: int_prices_indicators
+    description: Indicadores de ventana acotada (SMA 50/200, RSI 14, volatilidad, 52 semanas). Incremental.
+    data_tests:
+      - unique_combination_of_columns:
+          combination_of_columns: [ticker, trade_date]
+    columns:
+      - name: rsi_14
+        data_tests:
+          - is_between: {min_value: 0, max_value: 100}
+      - name: volatility_20d
+        data_tests:
+          - is_between: {min_value: 0, max_value: 5}

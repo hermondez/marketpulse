@@ -1,0 +1,24 @@
+version: 2
+sources:
+  - name: raw
+    description: Datos crudos cargados por la ingesta Python (MERGE idempotente).
+    database: "{{ env_var('SNOWFLAKE_DATABASE', 'MARKETPULSE') }}"
+    schema: RAW
+    loaded_at_field: ingested_at
+    freshness:
+      warn_after: {count: 3, period: day}
+      error_after: {count: 5, period: day}
+    tables:
+      - name: prices_daily
+        description: OHLCV diario por ticker.
+        columns:
+          - name: ticker
+            data_tests: [not_null]
+          - name: trade_date
+            data_tests: [not_null]
+        data_tests:
+          - unique_combination_of_columns:
+              combination_of_columns: [ticker, trade_date]
+      - name: dividends
+        description: Dividendos por fecha ex (solo con yfinance).
+        freshness: null  # los dividendos no llegan a diario

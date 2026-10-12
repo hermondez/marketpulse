@@ -1,0 +1,23 @@
+version: 2
+seeds:
+  - name: seed_ticker_metadata
+    description: Metadatos de los tickers de la watchlist (mantener en sync con config/watchlist.yaml).
+    columns:
+      - name: ticker
+        data_tests: [not_null, unique]
+      - name: asset_type
+        data_tests:
+          - accepted_values: {values: ['etf', 'stock']}
+  - name: seed_portfolio_holdings
+    description: Portafolio 100 % HIPOTÉTICO para fines educativos. No representa dinero real.
+    data_tests:
+      - unique_combination_of_columns:
+          combination_of_columns: [portfolio_id, ticker]
+    columns:
+      - name: shares
+        data_tests:
+          - is_between: {min_value: 0.000001, max_value: 1000000}
+      - name: avg_cost
+        data_tests: [not_null]
+      - name: purchase_date
+        data_tests: [not_null, not_in_future]

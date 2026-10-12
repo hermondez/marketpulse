@@ -1,0 +1,18 @@
+# Reglas de alertas (Módulo 2). Todas informativas, nunca recomiendan comprar/vender.
+daily_move:
+  enabled: true
+  threshold_pct: 2.0        # |retorno diario| > 2 %
+sma200_cross:
+  enabled: true             # cruce del precio por encima/debajo de la SMA 200
+rsi_extreme:
+  enabled: true
+  high: 70
+  low: 30
+near_52w_low:
+  enabled: true
+  within_pct: 3.0           # a menos de 3 % del mínimo de 52 semanas
+daily_summary:
+  enabled: true
+health:
+  max_staleness_days: 4     # tolera fin de semana largo / feriado
+  min_rows_per_day: 5       # chequeo de volumen: al menos N tickers cargados

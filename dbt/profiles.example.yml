@@ -1,0 +1,27 @@
+# Copia a ~/.dbt/profiles.yml (o dbt/profiles.yml, ignorado por git).
+# Todo sale de variables de entorno: sin credenciales en el repo.
+marketpulse:
+  target: "{{ env_var('DBT_TARGET', 'dev') }}"
+  outputs:
+    dev:
+      type: snowflake
+      account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
+      user: "{{ env_var('SNOWFLAKE_USER') }}"
+      password: "{{ env_var('SNOWFLAKE_PASSWORD') }}"
+      role: "{{ env_var('SNOWFLAKE_TRANSFORMER_ROLE', 'MARKETPULSE_TRANSFORMER') }}"
+      warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE', 'MARKETPULSE_WH') }}"
+      database: "{{ env_var('SNOWFLAKE_DATABASE', 'MARKETPULSE') }}"
+      schema: "{{ env_var('DBT_SCHEMA_PREFIX', 'DEV') }}"
+      threads: 4
+      query_tag: marketpulse_dbt
+    prod:
+      type: snowflake
+      account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
+      user: "{{ env_var('SNOWFLAKE_USER') }}"
+      password: "{{ env_var('SNOWFLAKE_PASSWORD') }}"
+      role: "{{ env_var('SNOWFLAKE_TRANSFORMER_ROLE', 'MARKETPULSE_TRANSFORMER') }}"
+      warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE', 'MARKETPULSE_WH') }}"
+      database: "{{ env_var('SNOWFLAKE_DATABASE', 'MARKETPULSE') }}"
+      schema: PROD
+      threads: 4
+      query_tag: marketpulse_dbt

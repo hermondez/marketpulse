@@ -1,0 +1,4 @@
+{
+  "recommendations": ["ms-python.python", "charliermarsh.ruff", "innoverio.vscode-dbt-power-user",
+                      "github.vscode-github-actions", "ms-azuretools.vscode-docker"]
+}

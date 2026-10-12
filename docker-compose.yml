@@ -1,0 +1,18 @@
+# Uso local: `docker compose run --rm ingest` o `docker compose up dashboard`
+services:
+  ingest:
+    build: .
+    env_file: .env
+  alerts:
+    build: .
+    env_file: .env
+    entrypoint: ["mp-alerts"]
+  dashboard:
+    image: python:3.11-slim
+    working_dir: /app
+    volumes: [".:/app"]
+    env_file: .env
+    ports: ["8501:8501"]
+    command: >
+      sh -c "pip install -q -e '.[dashboard]' &&
+             streamlit run src/marketpulse/dashboard/app.py --server.address 0.0.0.0"

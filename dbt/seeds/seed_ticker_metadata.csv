@@ -1,0 +1,9 @@
+ticker,name,asset_type,category
+VOO,Vanguard S&P 500 ETF,etf,Acciones EE.UU. gran capitalización
+VTI,Vanguard Total Stock Market ETF,etf,Acciones EE.UU. mercado total
+VXUS,Vanguard Total International Stock ETF,etf,Acciones internacionales
+BND,Vanguard Total Bond Market ETF,etf,Bonos EE.UU.
+QQQ,Invesco QQQ Trust,etf,Acciones tecnológicas (Nasdaq-100)
+AAPL,Apple Inc.,stock,Tecnología
+MSFT,Microsoft Corp.,stock,Tecnología
+JNJ,Johnson & Johnson,stock,Salud / dividendos

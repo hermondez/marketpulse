@@ -1,0 +1,33 @@
+# Watchlist configurable. Añade o quita tickers sin tocar código.
+# Por qué estos: ETFs amplios y baratos (base típica de un inversor principiante)
+# + algunas large caps muy líquidas para ver comportamiento de acciones individuales.
+tickers:
+  - symbol: VOO   # S&P 500 (500 mayores empresas de EE.UU.)
+    type: etf
+    name: Vanguard S&P 500 ETF
+  - symbol: VTI   # Todo el mercado de EE.UU. (~3.600 empresas)
+    type: etf
+    name: Vanguard Total Stock Market ETF
+  - symbol: VXUS  # Acciones fuera de EE.UU. (diversificación geográfica)
+    type: etf
+    name: Vanguard Total International Stock ETF
+  - symbol: BND   # Bonos de EE.UU. (menos volátil, contrapeso a acciones)
+    type: etf
+    name: Vanguard Total Bond Market ETF
+  - symbol: QQQ   # Nasdaq-100 (sesgo tecnológico, más volátil)
+    type: etf
+    name: Invesco QQQ Trust
+  - symbol: AAPL
+    type: stock
+    name: Apple Inc.
+  - symbol: MSFT
+    type: stock
+    name: Microsoft Corp.
+  - symbol: JNJ   # Defensiva, paga dividendos: útil para ver la tabla de dividendos
+    type: stock
+    name: Johnson & Johnson
+
+# Días de historia en la primera carga (backfill). Luego la ingesta es incremental.
+backfill_days: 750
+# Días que se re-descargan en cada corrida diaria (cubre correcciones de la fuente).
+lookback_days: 7
