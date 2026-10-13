@@ -13,6 +13,9 @@ near_52w_low:
   within_pct: 3.0           # a menos de 3 % del mínimo de 52 semanas
 daily_summary:
   enabled: true
+# Tickers "spotlight": sección extra solo en el resumen diario (p. ej. la empresa donde trabajas).
+# NO entran en la watchlist, dashboard, portafolio, seeds ni reglas; no se guardan en Snowflake.
+spotlight: [IBM]
 health:
   max_staleness_days: 4     # tolera fin de semana largo / feriado
   min_rows_per_day: 5       # chequeo de volumen: al menos N tickers cargados

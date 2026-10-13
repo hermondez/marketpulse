@@ -13,6 +13,7 @@ from marketpulse.alerts.rules import (
     format_alert,
     format_daily_summary,
 )
+from marketpulse.alerts.spotlight import append_spotlight, build_spotlight_sections
 from marketpulse.alerts.telegram import TelegramClient
 from marketpulse.config import MARTS_SCHEMA, load_alerts_config, load_watchlist
 from marketpulse.logging_utils import get_logger
@@ -46,7 +47,11 @@ def main() -> int:
 
         candidates = [a for r in rows for a in evaluate(r, cfg)]
         if cfg.get("daily_summary", {}).get("enabled"):
-            candidates.append(Alert("daily_summary", "ALL", trade_date, format_daily_summary(rows)))
+            summary = format_daily_summary(rows)
+            spotlight = [str(t).upper() for t in (cfg.get("spotlight") or [])]
+            if spotlight and f"daily_summary:ALL:{trade_date}" not in sent:
+                summary = append_spotlight(summary, build_spotlight_sections(spotlight, trade_date))
+            candidates.append(Alert("daily_summary", "ALL", trade_date, summary))
         for alert in filter_new(candidates, sent):
             text = alert.message if alert.rule == "daily_summary" else format_alert(alert)
             tg.send(text)

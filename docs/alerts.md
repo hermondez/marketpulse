@@ -39,3 +39,11 @@ Si defines `DASHBOARD_URL` (en `.env`, o en GitHub → Settings → Secrets and 
 variable o secret `DASHBOARD_URL`), cada mensaje (alertas y resumen) lleva un botón inline
 **📊 Ver dashboard** que abre esa URL (p. ej. tu app de Streamlit Cloud). Si no está definida, los
 mensajes van sin botón.
+
+## Sección "Tu empresa" (spotlight)
+`config/alerts.yaml` → `spotlight: [IBM]` añade al **resumen diario** una sección
+`🏢 Tu empresa: IBM` con cierre, variación del día, del mes y del año, y distancia al máximo y mínimo
+de 52 semanas, más dos líneas explicativas. Estos tickers **no** entran en la watchlist, el dashboard,
+el portafolio simulado, los seeds de dbt ni las reglas de alertas, y **no se guardan en Snowflake**:
+se descargan al armar el mensaje con el extractor de yfinance (~1 año, solo sesiones ya cerradas).
+Si la descarga falla, la sección se omite y el resumen se envía igual (`spotlight.py`).
