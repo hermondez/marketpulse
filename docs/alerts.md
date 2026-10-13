@@ -40,10 +40,10 @@ variable o secret `DASHBOARD_URL`), cada mensaje (alertas y resumen) lleva un bo
 **📊 Ver dashboard** que abre esa URL (p. ej. tu app de Streamlit Cloud). Si no está definida, los
 mensajes van sin botón.
 
-## Sección "Tu empresa" (spotlight)
+## Sección spotlight (p. ej. IBM)
 `config/alerts.yaml` → `spotlight: [IBM]` añade al **resumen diario** una sección
-`🏢 Tu empresa: IBM` con cierre, variación del día, del mes y del año, y distancia al máximo y mínimo
-de 52 semanas, más dos líneas explicativas. Estos tickers **no** entran en la watchlist, el dashboard,
+`🏢 IBM` con cierre, variación del día, del mes y del año, lo más caro y lo más barato del último año
+(en lenguaje simple, indicando si está más cerca del mínimo o del máximo) y una nota neutral. Estos tickers **no** entran en la watchlist, el dashboard,
 el portafolio simulado, los seeds de dbt ni las reglas de alertas, y **no se guardan en Snowflake**:
 se descargan al armar el mensaje con el extractor de yfinance (~1 año, solo sesiones ya cerradas).
 Si la descarga falla, la sección se omite y el resumen se envía igual (`spotlight.py`).

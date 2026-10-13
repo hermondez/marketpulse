@@ -1,4 +1,4 @@
-"""Sección "Tu empresa" del resumen diario (tickers spotlight, p. ej. IBM).
+"""Sección spotlight del resumen diario (tickers spotlight, p. ej. IBM).
 
 Los tickers de `config/alerts.yaml` → `spotlight` NO están en la watchlist, el dashboard, el
 portafolio ni los seeds de dbt, y sus datos NO se guardan en Snowflake: se descargan al momento
@@ -82,21 +82,39 @@ def _pct(x: float | None) -> str:
     return "sin dato" if x is None else f"{x * 100:+.2f}%"
 
 
+def _range_line(m: dict[str, Any]) -> str:
+    hi, lo, close = m["high_52w"], m["low_52w"], m["close"]
+    if hi <= lo:
+        return "Su precio casi no ha cambiado en el último año."
+    pos = (close - lo) / (hi - lo)
+    if pos < 0.45:
+        return "Está más cerca de su precio más bajo del año que del más alto."
+    if pos > 0.55:
+        return "Está más cerca de su precio más alto del año que del más bajo."
+    return "Está más o menos a mitad de camino entre su precio más bajo y el más alto del año."
+
+
 def format_section(m: dict[str, Any]) -> str:
-    t = m["ticker"]
+    below_hi = -m["from_high_pct"] * 100
+    above_lo = m["from_low_pct"] * 100
+    hi_txt = (
+        "hoy está en ese nivel"
+        if below_hi < 0.5
+        else f"hoy está {below_hi:.0f}% más barata que eso"
+    )
+    lo_txt = "hoy está en ese nivel" if above_lo < 0.5 else f"hoy está {above_lo:.0f}% por encima"
     lines = [
-        f"🏢 <b>Tu empresa: {t}</b> · cierre {m['trade_date']}",
+        f"🏢 <b>{m['ticker']}</b> · cierre {m['trade_date']}",
         f"• Cierre: ${m['close']:,.2f} ({_pct(m['day_pct'])} en el día)",
         f"• En lo que va del mes: {_pct(m['mtd_pct'])}",
         f"• En lo que va del año: {_pct(m['ytd_pct'])}",
-        f"• Frente al máximo de 52 semanas (${m['high_52w']:,.2f}): {_pct(m['from_high_pct'])}",
-        f"• Frente al mínimo de 52 semanas (${m['low_52w']:,.2f}): {_pct(m['from_low_pct'])}",
+        f"• Lo más caro del último año: ${m['high_52w']:,.2f}; {hi_txt}",
+        f"• Lo más barato del último año: ${m['low_52w']:,.2f}; {lo_txt}",
+        _range_line(m),
         "",
-        "<i>Cómo leerlo: el % del mes y del año compara el precio de hoy con el último cierre "
-        "antes de que empezara ese periodo. El máximo y el mínimo de 52 semanas muestran en qué "
-        "parte de su rango del último año está el precio.</i>",
-        "<i>Es una sola empresa, así que se mueve más que un fondo diversificado. Si además "
-        "trabajas ahí, tu sueldo y esta acción dependen de lo mismo: tenlo presente.</i>",
+        "<i>Cómo leerlo: el % del mes y del año compara el precio de hoy con el de antes de que "
+        "empezara ese periodo.</i>",
+        "<i>Es una sola empresa, así que se mueve más que un fondo diversificado.</i>",
     ]
     return "\n".join(lines)
 

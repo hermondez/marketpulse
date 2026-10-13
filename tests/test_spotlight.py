@@ -56,8 +56,14 @@ def test_section_content_and_completed_sessions_only():
     secs = build_spotlight_sections(["IBM"], as_of="2026-03-10", fetcher=fake_fetch, now=NOW)
     assert len(secs) == 1
     s = secs[0]
-    assert "🏢 <b>Tu empresa: IBM</b>" in s and "2026-03-10" in s and "2026-03-11" not in s
-    for k in ("Cierre", "mes", "año", "máximo de 52 semanas", "mínimo de 52 semanas"):
+    assert (
+        "🏢 <b>IBM</b>" in s
+        and "Tu empresa" not in s
+        and "trabajas" not in s
+        and "2026-03-10" in s
+        and "2026-03-11" not in s
+    )
+    for k in ("Cierre", "mes", "año", "Lo más caro", "Lo más barato", "Está más cerca"):
         assert k in s
     assert not any(w in s.lower() for w in FORBIDDEN_WORDS)
 
@@ -79,3 +85,14 @@ def test_spotlight_config_not_in_watchlist():
     cfg = load_alerts_config()
     assert "IBM" in cfg.get("spotlight", [])
     assert "IBM" not in {t.symbol for t in load_watchlist().tickers}
+
+
+def test_range_line():
+    from marketpulse.alerts.spotlight import _range_line
+
+    assert "más bajo del año que del más alto" in _range_line(
+        {"high_52w": 300.0, "low_52w": 200.0, "close": 210.0}
+    )
+    assert "más alto del año que del más bajo" in _range_line(
+        {"high_52w": 300.0, "low_52w": 200.0, "close": 290.0}
+    )
