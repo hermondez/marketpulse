@@ -62,3 +62,25 @@ def test_wording_never_advises():
 def test_dedup():
     alerts = evaluate(row(daily_return=0.05), CFG)
     assert filter_new(alerts, {alerts[0].key}) == []
+
+
+def test_friendly_names_and_no_per_message_disclaimer():
+    from marketpulse.alerts.rules import enrich_rows
+    from marketpulse.config import load_watchlist
+
+    rows = enrich_rows([row(ticker="AAPL", daily_return=0.05)], load_watchlist().tickers)
+    text = format_alert(evaluate(rows[0], CFG)[0])
+    assert "Apple (AAPL)" in text and "$100.00" in text
+    assert "no es recomendación" not in text.lower()
+    summary = format_daily_summary(rows)
+    assert "Apple (AAPL)" in summary and "🟢" in summary
+
+
+def test_bond_context_and_two_readings():
+    from marketpulse.alerts.rules import enrich_rows
+    from marketpulse.config import load_watchlist
+
+    rows = enrich_rows([row(ticker="BND", pct_from_52w_low=0.01)], load_watchlist().tickers)
+    text = format_alert(evaluate(rows[0], CFG)[0]).lower()
+    assert "vanguard total bond (bnd)" in text and "tasas de interés" in text
+    assert "algunos" in text and "otros" in text

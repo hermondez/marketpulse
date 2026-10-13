@@ -7,9 +7,9 @@ Este proceso de polling es opcional porque requiere un servidor encendido 24/7
 
 from __future__ import annotations
 
-from marketpulse.alerts.rules import format_daily_summary
+from marketpulse.alerts.rules import enrich_rows, format_daily_summary
 from marketpulse.alerts.telegram import TelegramClient
-from marketpulse.config import MARTS_SCHEMA
+from marketpulse.config import MARTS_SCHEMA, load_watchlist
 from marketpulse.logging_utils import get_logger
 
 log = get_logger(__name__)
@@ -30,7 +30,7 @@ def handle(text: str) -> str:
             )
             cols = [c[0].lower() for c in cur.description]
             rows = [dict(zip(cols, r, strict=True)) for r in cur.fetchall()]
-        return format_daily_summary(rows)
+        return format_daily_summary(enrich_rows(rows, load_watchlist().tickers))
     return HELP
 
 

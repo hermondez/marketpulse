@@ -32,6 +32,8 @@ env:
   SNOWFLAKE_DATABASE: MARKETPULSE
   TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
   TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+  # Opcional (variable o secret del repo): botón "Ver dashboard" en los mensajes de Telegram
+  DASHBOARD_URL: ${{ vars.DASHBOARD_URL || secrets.DASHBOARD_URL }}
   PRICE_SOURCE: yfinance
   DBT_TARGET: prod
   MARTS_SCHEMA: MARTS

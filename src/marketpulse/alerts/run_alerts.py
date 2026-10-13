@@ -6,9 +6,15 @@ Así, re-ejecutar el job el mismo día no repite mensajes.
 
 from __future__ import annotations
 
-from marketpulse.alerts.rules import Alert, evaluate, format_alert, format_daily_summary
+from marketpulse.alerts.rules import (
+    Alert,
+    enrich_rows,
+    evaluate,
+    format_alert,
+    format_daily_summary,
+)
 from marketpulse.alerts.telegram import TelegramClient
-from marketpulse.config import MARTS_SCHEMA, load_alerts_config
+from marketpulse.config import MARTS_SCHEMA, load_alerts_config, load_watchlist
 from marketpulse.logging_utils import get_logger
 
 log = get_logger(__name__)
@@ -30,6 +36,7 @@ def main() -> int:
         cur.execute(LATEST_SQL)
         cols = [c[0].lower() for c in cur.description]
         rows = [dict(zip(cols, r, strict=True)) for r in cur.fetchall()]
+        rows = enrich_rows(rows, load_watchlist().tickers)  # nombres amigables
         if not rows:
             log.warning("MART_LATEST_METRICS vacío")
             return 0

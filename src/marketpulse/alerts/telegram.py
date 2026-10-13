@@ -26,18 +26,25 @@ class TelegramClient:
         """El bot SOLO atiende al chat configurado."""
         return str(chat_id) == self.chat_id
 
+    def build_payload(self, text: str, dashboard_url: str | None = None) -> dict:
+        """Cuerpo de sendMessage. Si hay DASHBOARD_URL, añade un botón '📊 Ver dashboard'
+        (inline keyboard). Si no, el mensaje va sin botón. Función pura -> testeable."""
+        payload = {
+            "chat_id": self.chat_id,
+            "text": text,
+            "parse_mode": "HTML",
+            "disable_web_page_preview": True,
+        }
+        url = (dashboard_url if dashboard_url is not None else env("DASHBOARD_URL")) or ""
+        if url.strip():
+            payload["reply_markup"] = {
+                "inline_keyboard": [[{"text": "📊 Ver dashboard", "url": url.strip()}]]
+            }
+        return payload
+
     @retry(stop=stop_after_attempt(3), wait=wait_exponential(min=1, max=10), reraise=True)
     def send(self, text: str) -> None:
-        resp = requests.post(
-            self._url("sendMessage"),
-            json={
-                "chat_id": self.chat_id,
-                "text": text,
-                "parse_mode": "HTML",
-                "disable_web_page_preview": True,
-            },
-            timeout=20,
-        )
+        resp = requests.post(self._url("sendMessage"), json=self.build_payload(text), timeout=20)
         resp.raise_for_status()
 
     def get_updates(self, offset: int | None = None, timeout: int = 30) -> list[dict]:

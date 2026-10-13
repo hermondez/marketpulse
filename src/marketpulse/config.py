@@ -64,6 +64,13 @@ class Ticker:
     symbol: str
     type: str = "etf"
     name: str = ""
+    short_name: str = ""  # nombre amigable para Telegram (ej. "Apple")
+    context: str = ""  # una frase que explica qué es el activo
+    asset_class: str = ""  # ej. "bonds"; vacío = acciones
+
+    @property
+    def display_name(self) -> str:
+        return self.short_name or self.name or self.symbol
 
 
 @dataclass(frozen=True)

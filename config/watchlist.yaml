@@ -1,31 +1,49 @@
 # Watchlist configurable. Añade o quita tickers sin tocar código.
 # Por qué estos: ETFs amplios y baratos (base típica de un inversor principiante)
 # + algunas large caps muy líquidas para ver comportamiento de acciones individuales.
+# short_name: nombre corto que aparece en Telegram. context: una frase que explica qué es.
 tickers:
   - symbol: VOO   # S&P 500 (500 mayores empresas de EE.UU.)
     type: etf
     name: Vanguard S&P 500 ETF
+    short_name: Vanguard S&P 500
+    context: "Es un fondo que reúne a las 500 empresas más grandes de EE.UU.; refleja cómo va el mercado estadounidense en general."
   - symbol: VTI   # Todo el mercado de EE.UU. (~3.600 empresas)
     type: etf
     name: Vanguard Total Stock Market ETF
+    short_name: Vanguard Mercado Total EE.UU.
+    context: "Es un fondo con casi todas las empresas de la bolsa de EE.UU. (grandes, medianas y pequeñas)."
   - symbol: VXUS  # Acciones fuera de EE.UU. (diversificación geográfica)
     type: etf
     name: Vanguard Total International Stock ETF
+    short_name: Vanguard Internacional
+    context: "Es un fondo con empresas de fuera de EE.UU. (Europa, Asia, emergentes); también le afecta el valor del dólar."
   - symbol: BND   # Bonos de EE.UU. (menos volátil, contrapeso a acciones)
     type: etf
+    asset_class: bonds
     name: Vanguard Total Bond Market ETF
+    short_name: Vanguard Total Bond
+    context: "Es un fondo de bonos (préstamos a gobiernos y empresas): suele moverse poco y su precio baja cuando suben las tasas de interés."
   - symbol: QQQ   # Nasdaq-100 (sesgo tecnológico, más volátil)
     type: etf
     name: Invesco QQQ Trust
+    short_name: Nasdaq-100 (QQQ)
+    context: "Es un fondo con las 100 mayores empresas del Nasdaq, muy cargado a tecnología: suele subir y bajar más que el mercado."
   - symbol: AAPL
     type: stock
     name: Apple Inc.
+    short_name: Apple
+    context: "Es una sola empresa (acción individual): se mueve más que un fondo diversificado y reacciona a sus propias noticias."
   - symbol: MSFT
     type: stock
     name: Microsoft Corp.
+    short_name: Microsoft
+    context: "Es una sola empresa (acción individual): se mueve más que un fondo diversificado y reacciona a sus propias noticias."
   - symbol: JNJ   # Defensiva, paga dividendos: útil para ver la tabla de dividendos
     type: stock
     name: Johnson & Johnson
+    short_name: Johnson & Johnson
+    context: "Es una sola empresa de salud, considerada 'defensiva' y conocida por pagar dividendos."
 
 # Días de historia en la primera carga (backfill). Luego la ingesta es incremental.
 backfill_days: 750

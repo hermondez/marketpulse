@@ -15,7 +15,7 @@ lenguaje natural sobre los datos.
 | # | Módulo | Qué hace |
 |---|---|---|
 | 1 | Tracker | Watchlist YAML → Python (reintentos, MERGE idempotente) → RAW → dbt (staging/intermediate/marts): retornos, SMA 50/200, RSI 14, volatilidad 20/252d, drawdown, 52 semanas, portafolio simulado |
-| 2 | Alertas Telegram | Movimiento diario > X %, cruce SMA 200, RSI extremo, cerca del mínimo 52s, resumen de cierre. Dedup en `OPS.ALERTS_LOG`. Redacción informativa |
+| 2 | Alertas Telegram | Movimiento diario > X %, cruce SMA 200, RSI extremo, cerca del mínimo 52s, resumen de cierre. Dedup en `OPS.ALERTS_LOG`. Redacción explicativa para principiantes y botón opcional "📊 Ver dashboard" (`DASHBOARD_URL`) |
 | 3 | Salud del pipeline | `run_results.json` → Snowflake, frescura y volumen, alerta si falla |
 | 4 | Pregunta a tus datos | Español → LLM (Cortex/OpenAI/Anthropic) → SQL validado con sqlglot → rol de solo lectura |
 

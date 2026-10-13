@@ -22,7 +22,7 @@ sesión (Thanksgiving, Navidad, Viernes Santo...), los demás pasos se omiten y 
 
 ## Secrets (Settings → Secrets and variables → Actions)
 `SNOWFLAKE_ACCOUNT`, `SNOWFLAKE_USER`, `SNOWFLAKE_PASSWORD`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`,
-`LLM_API_KEY` (solo si usas OpenAI/Anthropic). Nunca en el código. Recomendado: autenticación
+`LLM_API_KEY` (solo si usas OpenAI/Anthropic), `DASHBOARD_URL` (opcional, mejor como variable). Nunca en el código. Recomendado: autenticación
 key-pair de Snowflake (`SNOWFLAKE_PRIVATE_KEY`) en vez de contraseña.
 
 ## Alternativas

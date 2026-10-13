@@ -14,8 +14,11 @@
 ## Por qué así
 - **Reglas como funciones puras** (`rules.py`): testeables sin Telegram ni Snowflake.
 - **Deduplicación** con `OPS.ALERTS_LOG` (clave `regla:ticker:fecha`): re-ejecutar no repite mensajes.
-- **Redacción informativa**: verbos descriptivos ("subió", "cruzó"). Un test verifica que no aparezcan
-  "compra", "vende", "oportunidad", etc. Cada mensaje lleva aviso educativo.
+- **Redacción para principiantes**: cada alerta usa el nombre amigable ("Apple (AAPL)", definido en
+  `config/watchlist.yaml` → `short_name`) y explica qué pasó, qué significa, por qué puede importar y
+  las dos lecturas habituales, con contexto del activo (p. ej. BND es un fondo de bonos y baja cuando
+  suben las tasas). Un test verifica que no aparezcan "compra", "vende", "oportunidad", etc. El aviso
+  legal vive en README/docs (no se repite en cada mensaje).
 - **Seguridad**: token en `TELEGRAM_BOT_TOKEN` (GitHub Secret). Solo se envía a `TELEGRAM_CHAT_ID`.
   El bot interactivo (`mp-bot`) ignora en silencio cualquier chat no autorizado.
 
@@ -30,3 +33,9 @@ Email (SMTP), Slack/Discord webhooks, ntfy.sh. Telegram se eligió por ser grati
 ## Cuándo reutilizar
 Cualquier alerta de datos con deduplicación: anomalías de ventas, SLAs, umbrales de KPIs.
 Ver `docs/telegram_botfather.md` para crear el bot.
+
+## Botón "Ver dashboard" (opcional)
+Si defines `DASHBOARD_URL` (en `.env`, o en GitHub → Settings → Secrets and variables → Actions como
+variable o secret `DASHBOARD_URL`), cada mensaje (alertas y resumen) lleva un botón inline
+**📊 Ver dashboard** que abre esa URL (p. ej. tu app de Streamlit Cloud). Si no está definida, los
+mensajes van sin botón.
