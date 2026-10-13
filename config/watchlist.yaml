@@ -27,7 +27,7 @@ tickers:
   - symbol: QQQ   # Nasdaq-100 (sesgo tecnológico, más volátil)
     type: etf
     name: Invesco QQQ Trust
-    short_name: Nasdaq-100 (QQQ)
+    short_name: Invesco Nasdaq-100
     context: "Es un fondo con las 100 mayores empresas del Nasdaq, muy cargado a tecnología: suele subir y bajar más que el mercado."
   - symbol: AAPL
     type: stock

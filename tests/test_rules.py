@@ -84,3 +84,12 @@ def test_bond_context_and_two_readings():
     text = format_alert(evaluate(rows[0], CFG)[0]).lower()
     assert "vanguard total bond (bnd)" in text and "tasas de interés" in text
     assert "algunos" in text and "otros" in text
+
+
+def test_label_no_duplicate_ticker():
+    from marketpulse.alerts.rules import label
+
+    assert label({"ticker": "QQQ", "display_name": "Nasdaq-100 (QQQ)"}) == "Nasdaq-100 (QQQ)"
+    assert (
+        label({"ticker": "QQQ", "display_name": "Invesco Nasdaq-100"}) == "Invesco Nasdaq-100 (QQQ)"
+    )

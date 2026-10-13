@@ -36,7 +36,9 @@ def label(row: dict[str, Any]) -> str:
     """'Apple (AAPL)'. Usa display_name (watchlist) o name (dim_ticker) si existen."""
     t = row["ticker"]
     name = row.get("display_name") or row.get("name")
-    return f"{name} ({t})" if name and name != t else t
+    if not name or name == t or f"({t})" in name:  # evita "Nasdaq (QQQ) (QQQ)"
+        return name or t
+    return f"{name} ({t})"
 
 
 def _is_bond(row: dict[str, Any]) -> bool:
